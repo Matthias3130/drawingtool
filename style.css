@@ -1,0 +1,25 @@
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#drawing-screen {
+  background-color: antiquewhite;
+}
+
+#tool-menu {
+  background-color: dimgrey;
+  width: 10vw;
+}
+
+#tool-container {
+  display: flexbox;
+  padding: 0.5rem;
+  margin: 0.5rem;
+  border-radius: 4px;
+  background-color: rgba(211, 211, 211, 0.5);
+}
