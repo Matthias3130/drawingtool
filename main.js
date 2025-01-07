@@ -5,6 +5,7 @@ const ctx = drawingScreen.getContext('2d');
 
 let isDrawing = false
 let drawings = [];
+let lastPoint = null;
 
 function drawCircleOutline(x, y, radius) {
     ctx.beginPath();
@@ -24,9 +25,20 @@ function drawCircle(x, y, radius) {
     ctx.stroke(); 
 }
 
+function drawSmoothLine(fromX, fromY, toX, toY) {
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 10;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.closePath();
+}
+
 function redraw() {
     ctx.clearRect(0, 0, drawingScreen.width, drawingScreen.height); 
-    drawings.forEach(([x, y, radius]) => drawCircle(x, y, radius));
+    drawings.forEach(([x, y, a, b]) => drawSmoothLine(x, y, a, b));
 }
 
 function drawToolOutline(event) {
@@ -43,20 +55,32 @@ function addCircle(x, y) {
 
 function startDrawing(event) {
     isDrawing = true;
-    addCircle(event.clientX, event.clientY);
+    lastPoint = { x: event.clientX, y: event.clientY }; 
 }
 
 function stopDrawing() {
     isDrawing = false;
+    lastPoint = null; 
 }
 
 function drawWhileMoving(event) {
-    if (isDrawing) {
-        addCircle(event.clientX, event.clientY);
-    }
+    addCircle(event.clientX, event.clientY);
+}
+
+function draw(event) {
+    if (!isDrawing) return;
+
+    const currentPoint = { x: event.clientX, y: event.clientY };
+    drawings.push([lastPoint.x, lastPoint.y, currentPoint.x, currentPoint.y]);
+    drawSmoothLine(lastPoint.x, lastPoint.y, currentPoint.x, currentPoint.y);
+    lastPoint = currentPoint; 
 }
 
 drawingScreen.addEventListener('mousemove', drawToolOutline);
 drawingScreen.addEventListener('mousedown', startDrawing);
 drawingScreen.addEventListener('mouseup', stopDrawing);
-drawingScreen.addEventListener('mousemove', drawWhileMoving);
+drawingScreen.addEventListener('mousemove', (event) => {
+    if (isDrawing) {
+        requestAnimationFrame(() => draw(event)); 
+    }
+});
