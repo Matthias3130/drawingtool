@@ -81,6 +81,6 @@ drawingScreen.addEventListener('mousedown', startDrawing);
 drawingScreen.addEventListener('mouseup', stopDrawing);
 drawingScreen.addEventListener('mousemove', (event) => {
     if (isDrawing) {
-        requestAnimationFrame(() => draw(event));
+        requestAnimationFrame(() => draw(event)); //
     }
 });
